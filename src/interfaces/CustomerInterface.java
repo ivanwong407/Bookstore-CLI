@@ -1,11 +1,12 @@
 package interfaces;
 
 import java.util.Scanner;
+import java.sql.Connection;
 
 public class CustomerInterface {
     private static Scanner scanner = new Scanner(System.in);
 
-    public static void displayCustomerInterface() {
+    public static void displayCustomerInterface(Connection conn) {
         System.out.println("<This is the Customer interface.>");
         System.out.println("-------------------------------------------");
         System.out.println("1. Book Search");
@@ -16,31 +17,31 @@ public class CustomerInterface {
         System.out.print("Please enter your choice??..");
         int choice = scanner.nextInt();
 
-        handleChoice(choice);
+        handleChoice(choice, conn);
     }
 
-    private static void handleChoice(int choice) {
+    private static void handleChoice(int choice, Connection conn) {
         Command command;
         switch (choice) {
             case 1:
-                command = new SearchBookCommand();
-                command.execute();
+                command = new SearchBookCommand(conn);
+                command.execute(conn);
                 break;
             case 2:
                 command = new CreateOrderCommand();
-                command.execute();
+                command.execute(conn);
                 break;
             case 3:
                 command = new OrderAlteringCommand();
-                command.execute();
+                command.execute(conn);
                 break;
             case 4:
                 command = new OrderQueryCommand();
-                command.execute();
+                command.execute(conn);
                 break;
             case 5:
                 System.out.println("Going back to main menu...");
-                MainInterface.displayMainMenu();
+                MainInterface.displayMainMenu(conn);
                 break;  
             default:
                 System.out.println("Invalid choice!");
@@ -52,7 +53,7 @@ public class CustomerInterface {
 
     private static class CreateOrderCommand implements Command {
         @Override
-        public void execute() {
+        public void execute(Connection conn) {
             // Implement logic to place an order
             System.out.println("Placing an order...");
         }
@@ -60,7 +61,7 @@ public class CustomerInterface {
 
     private static class OrderAlteringCommand implements Command {
         @Override
-        public void execute() {
+        public void execute(Connection conn) {
             // Implement logic to view order history
             System.out.println("Order Altering...");
         }
@@ -68,7 +69,7 @@ public class CustomerInterface {
 
     private static class OrderQueryCommand implements Command {
         @Override
-        public void execute() {
+        public void execute(Connection conn) {
             // Implement logic to view order history
             System.out.println("Order query...");
         }

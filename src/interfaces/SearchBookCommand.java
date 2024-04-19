@@ -1,12 +1,21 @@
 package interfaces;
 
 import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class SearchBookCommand implements Command {
     private static Scanner scanner = new Scanner(System.in);
+    private Connection conn;
+
+    public SearchBookCommand(Connection conn) {
+        this.conn = conn;
+    }
 
     @Override
-    public void execute() {
+    public void execute(Connection conn) {
         System.out.println("Book Search");
         System.out.println("To query a book by ISBN, Book Title and Author Name");
         System.out.println("What do you want to search??");
@@ -38,15 +47,43 @@ public class SearchBookCommand implements Command {
         }
     }
 
-    private static void searchByISBN() {
+    private void searchByISBN() {
         System.out.print("Enter the ISBN: ");
         String isbn = scanner.nextLine();
-        // Implement logic to search for a book by ISBN
-        System.out.println("Searching for book with ISBN: " + isbn);
-        // ...
+
+        try {
+            // Prepare the SQL query
+            String query = "SELECT * FROM BOOKS WHERE ISBN = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, isbn);
+
+            // Execute the query
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                // Book found, display the details
+                String bookTitle = resultSet.getString("BOOK_TITLE");
+                float unitPrice = resultSet.getFloat("UNIT_PRICE");
+                int copiesAvailable = resultSet.getInt("COPIES_AVAILABLE");
+
+                System.out.println("Book Details:");
+                System.out.println("ISBN: " + isbn);
+                System.out.println("Book Title: " + bookTitle);
+                System.out.println("Unit Price: " + unitPrice);
+                System.out.println("Copies Available: " + copiesAvailable);
+            } else {
+                System.out.println("No book found with ISBN: " + isbn);
+            }
+
+            // Close the resources
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static void searchByBookTitle() {
+    private void searchByBookTitle() {
         System.out.print("Enter the book title: ");
         String title = scanner.nextLine();
         // Implement logic to search for a book by title
@@ -54,7 +91,7 @@ public class SearchBookCommand implements Command {
         // ...
     }
 
-    private static void searchByAuthorName() {
+    private void searchByAuthorName() {
         System.out.print("Enter the author name: ");
         String authorName = scanner.nextLine();
         // Implement logic to search for a book by author name

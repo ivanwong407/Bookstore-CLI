@@ -1,5 +1,5 @@
 package interfaces;
-
+import java.sql.Connection;
 import java.util.Scanner;
 import java.time.LocalDateTime; //show system date
 import java.time.format.DateTimeFormatter; //show system date
@@ -7,11 +7,11 @@ import java.time.format.DateTimeFormatter; //show system date
 public class MainInterface {
     private static Scanner scanner = new Scanner(System.in);
 
-    public static void main(String[] args) {
-        displayMainMenu();
+    public static void main(Connection conn) {
+        displayMainMenu(conn);
     }
 
-    public static void displayMainMenu() {
+    public static void displayMainMenu(Connection conn) {
         String currentDate = getCurrentDate();
         System.out.println("The System Date is now: " + currentDate);
         System.out.println("<This is the Book Ordering System.>");
@@ -25,20 +25,20 @@ public class MainInterface {
         System.out.print("Please enter your choice??..");
         int choice = scanner.nextInt();
 
-        handleChoice(choice);
+        handleChoice(choice, conn);
     }
 
-    private static void handleChoice(int choice) {
+    private static void handleChoice(int choice, Connection conn) {
         switch (choice) {
             case 1:
-                SystemInterface.displaySystemInterface();
+                SystemInterface.displaySystemInterface(conn);
                 break;
             case 2:
-                CustomerInterface.displayCustomerInterface();
+                CustomerInterface.displayCustomerInterface(conn);
                 break;
             // Add cases for other interfaces
             case 3:
-                BookstoreInterface.displayBookstoreInterface();
+                BookstoreInterface.displayBookstoreInterface(conn);
                 break;
             case 4:
                 showSystemDate();

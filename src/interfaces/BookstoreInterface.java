@@ -1,11 +1,11 @@
 package interfaces;
 
 import java.util.Scanner;
-
+import java.sql.Connection;
 public class BookstoreInterface {
     private static Scanner scanner = new Scanner(System.in);
 
-    public static void displayBookstoreInterface() {
+    public static void displayBookstoreInterface(Connection conn) {
         System.out.println("<This is the bookstore interface.>");
         System.out.println("-------------------------------------------");
         System.out.println("1. Order Update.");
@@ -28,7 +28,7 @@ public class BookstoreInterface {
                 break;
             case 4:
                 System.out.println("Going back to main menu...");
-                MainInterface.displayMainMenu();
+                MainInterface.displayMainMenu(conn);
                 break;
             default:
                 System.out.println("Invalid choice!");
