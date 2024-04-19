@@ -31,11 +31,11 @@ public class CustomerInterface {
                 command.execute();
                 break;
             case 3:
-                command = new ViewOrderHistoryCommand();
+                command = new OrderAlteringCommand();
                 command.execute();
                 break;
             case 4:
-                command = new ViewOrderHistoryCommand();
+                command = new OrderQueryCommand();
                 command.execute();
                 break;
             case 5:
@@ -64,11 +64,20 @@ public class CustomerInterface {
         }
     }
 
-    private static class ViewOrderHistoryCommand implements Command {
+    private static class OrderAlteringCommand implements Command {
         @Override
         public void execute() {
             // Implement logic to view order history
-            System.out.println("Viewing order history...");
+            System.out.println("Order Altering...");
         }
     }
+
+    private static class OrderQueryCommand implements Command {
+        @Override
+        public void execute() {
+            // Implement logic to view order history
+            System.out.println("Order query...");
+        }
+    }
+
 }
