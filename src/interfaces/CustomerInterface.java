@@ -8,7 +8,7 @@ public class CustomerInterface {
     public static void displayCustomerInterface() {
         System.out.println("<This is the Customer interface.>");
         System.out.println("-------------------------------------------");
-        System.out.println("1.Book Search");
+        System.out.println("1. Book Search");
         System.out.println("2. Order Creation.");
         System.out.println("3. Order Altering.");
         System.out.println("4. Order Query.");

@@ -1,6 +1,8 @@
 package interfaces;
 
 import java.util.Scanner;
+import java.time.LocalDateTime; //show system date
+import java.time.format.DateTimeFormatter; //show system date
 
 public class MainInterface {
     private static Scanner scanner = new Scanner(System.in);
@@ -10,7 +12,8 @@ public class MainInterface {
     }
 
     public static void displayMainMenu() {
-        System.out.println("The System Date is now: 0000-00-00");
+        String currentDate = getCurrentDate();
+        System.out.println("The System Date is now: " + currentDate);
         System.out.println("<This is the Book Ordering System.>");
         System.out.println("-------------------------------------------");
         System.out.println("1. System interface.");
@@ -37,6 +40,9 @@ public class MainInterface {
             case 3:
                 BookstoreInterface.displayBookstoreInterface();
                 break;
+            case 4:
+                showSystemDate();
+                break;
             case 5:
                 System.out.println("Quitting the system...");
                 break;
@@ -45,4 +51,18 @@ public class MainInterface {
                 break;
         }
     }
-} // Added closing curly brace here
+
+
+    private static String getCurrentDate() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return currentDateTime.format(formatter);
+    }
+    
+    private static void showSystemDate() {
+        String currentDate = getCurrentDate();
+        System.out.println("The current system date is: " + currentDate);
+    }
+
+
+} 
