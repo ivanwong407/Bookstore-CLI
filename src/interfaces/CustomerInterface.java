@@ -24,8 +24,7 @@ public class CustomerInterface {
         Command command;
         switch (choice) {
             case 1:
-                command = new SearchBookCommand(conn);
-                command.execute(conn);
+                SearchBook.displaySearchMenu(conn); // Use the existing instance
                 break;
             case 2:
                 command = new CreateOrderCommand();

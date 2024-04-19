@@ -10,7 +10,7 @@ public class MainInterface {
     public static void main(Connection conn) {
         displayMainMenu(conn);
     }
-
+    
     public static void displayMainMenu(Connection conn) {
         String currentDate = getCurrentDate();
         System.out.println("The System Date is now: " + currentDate);

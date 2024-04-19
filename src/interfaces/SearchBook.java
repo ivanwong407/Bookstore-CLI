@@ -6,16 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SearchBookCommand implements Command {
+public class SearchBook {
     private static Scanner scanner = new Scanner(System.in);
-    private Connection conn;
 
-    public SearchBookCommand(Connection conn) {
-        this.conn = conn;
-    }
-
-    @Override
-    public void execute(Connection conn) {
+    public static void displaySearchMenu(Connection conn) {
         System.out.println("Book Search");
         System.out.println("To query a book by ISBN, Book Title and Author Name");
         System.out.println("What do you want to search??");
@@ -28,18 +22,26 @@ public class SearchBookCommand implements Command {
         int choice = scanner.nextInt();
         scanner.nextLine(); // Consume the newline character
 
+        handleChoice(choice, conn);
+    }
+
+    private static void handleChoice(int choice, Connection conn) {
         switch (choice) {
             case 1:
-                searchByISBN();
+                searchByISBN(conn);
+                displaySearchMenu(conn);
                 break;
             case 2:
                 searchByBookTitle();
+                displaySearchMenu(conn);
                 break;
             case 3:
                 searchByAuthorName();
+                displaySearchMenu(conn);
                 break;
             case 4:
                 System.out.println("Exiting book search...");
+                CustomerInterface.displayCustomerInterface(conn);
                 break;
             default:
                 System.out.println("Invalid choice!");
@@ -47,7 +49,7 @@ public class SearchBookCommand implements Command {
         }
     }
 
-    private void searchByISBN() {
+    private static void searchByISBN(Connection conn) {
         System.out.print("Enter the ISBN: ");
         String isbn = scanner.nextLine();
 
@@ -83,7 +85,7 @@ public class SearchBookCommand implements Command {
         }
     }
 
-    private void searchByBookTitle() {
+    private static void searchByBookTitle() {
         System.out.print("Enter the book title: ");
         String title = scanner.nextLine();
         // Implement logic to search for a book by title
@@ -91,7 +93,7 @@ public class SearchBookCommand implements Command {
         // ...
     }
 
-    private void searchByAuthorName() {
+    private static void searchByAuthorName() {
         System.out.print("Enter the author name: ");
         String authorName = scanner.nextLine();
         // Implement logic to search for a book by author name
