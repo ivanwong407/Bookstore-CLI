@@ -16,4 +16,10 @@ public interface Command {
         }
     }
     
+    public class BookstoreInterfaceCommand implements Command {
+        @Override
+        public void execute() {
+            BookstoreInterface.displayBookstoreInterface();
+        }
+    }
 }

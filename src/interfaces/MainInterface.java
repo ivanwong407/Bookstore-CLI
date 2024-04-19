@@ -34,6 +34,9 @@ public class MainInterface {
                 CustomerInterface.displayCustomerInterface();
                 break;
             // Add cases for other interfaces
+            case 3:
+                BookstoreInterface.displayBookstoreInterface();
+                break;
             case 5:
                 System.out.println("Quitting the system...");
                 break;
