@@ -48,13 +48,7 @@ public class CustomerInterface {
         }
     }
 
-    private static class SearchBookCommand implements Command {
-        @Override
-        public void execute() {
-            // Implement logic to search for a book
-            System.out.println("Searching for a book...");
-        }
-    }
+
 
     private static class CreateOrderCommand implements Command {
         @Override
