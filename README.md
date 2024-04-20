@@ -7,7 +7,7 @@ Group:11
 run App.java file
 the command line interface will appear in console
 
-## Create Table command format:
+## Create Table command format (Noticed that if the table exist, you can't create same table again):
 Please enter your choice??..1
 Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
 CREATE TABLE CUSTOMERS (CUSTOMER_ID VARCHAR(30), CUSTOMER_NAME VARCHAR(30), SHIPPING_ADDRESS VARCHAR(100), CREDIT_CARD_NO VARCHAR(20), PRIMARY KEY (CUSTOMER_ID))
@@ -32,4 +32,8 @@ Please enter your choice??..1
 Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
 CREATE TABLE AUTHORS (ISBN VARCHAR(13), AUTHOR_NAME VARCHAR(30), PRIMARY KEY (ISBN, AUTHOR_NAME), FOREIGN KEY (ISBN) REFERENCES BOOKS(ISBN))
 Table created successfully.
+
+## The data insertion: (Noticed that only the data files inside test_data folder are able to insert)
+"your path"/our_porject/test_data"
+
 
