@@ -25,13 +25,14 @@ public class BookstoreInterface {
             case 1:
                 // Implement logic for Order Update
                 OrderUpdate(conn);
-                
                 break;
             case 2:
                 // Implement logic for Order Query
+                OrderQuery(conn);
                 break;
             case 3:
                 // Implement logic for N most Popular Book Query
+                // findNmost(conn);
                 break;
             case 4:
                 System.out.println("Going back to main menu...");
@@ -101,6 +102,49 @@ public class BookstoreInterface {
 
             statusResult.close();
             statusStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void OrderQuery(Connection conn) {
+        System.out.print("Please input the Month for Order Query (e.g. YYYY-MM): ");
+        String month = scanner.nextLine();
+
+        try {
+            // Query the total charges and orders for the given month
+            String query = "SELECT ORDER_ID, CUSTOMER_ID, ORDER_DATE, CHARGE " +
+                    "FROM ORDERS " +
+                    "WHERE SHIPPING_STATUS = 'Y' AND EXTRACT(MONTH FROM ORDER_DATE) = EXTRACT(MONTH FROM TO_DATE(?, 'YYYY-MM')) "
+                    +
+                    "ORDER BY ORDER_ID ASC";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, month);
+            ResultSet resultSet = statement.executeQuery();
+
+            // Print the orders and calculate the total charges
+            int count = 0;
+            int totalCharges = 0;
+            while (resultSet.next()) {
+                count++;
+                String orderId = resultSet.getString("ORDER_ID");
+                String customerId = resultSet.getString("CUSTOMER_ID");
+                String orderDate = resultSet.getString("ORDER_DATE");
+                int charge = resultSet.getInt("CHARGE");
+                totalCharges += charge;
+
+                System.out.println("\n\nRecord: " + count);
+                System.out.println("order id: " + orderId);
+                System.out.println("customer id: " + customerId);
+                System.out.println("date: " + orderDate);
+                System.out.println("charge: " + charge);
+            }
+
+            System.out.println("\n\nTotal charges of the month is " + totalCharges);
+            //System.out.println("Number of records: " + count
+
+            resultSet.close();
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
