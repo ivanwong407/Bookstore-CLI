@@ -21,7 +21,6 @@ public class CustomerInterface {
     }
 
     private static void handleChoice(int choice, Connection conn) {
-        Command command;
         switch (choice) {
             case 1:
                 SearchBook.displaySearchMenu(conn); // Use the existing instance
