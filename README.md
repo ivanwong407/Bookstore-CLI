@@ -1,13 +1,26 @@
 ## Create Table testing:
-<This is the System interface.>
--------------------------------------------
-1. Create Table.
-2. Delete Table.
-3. Insert Data.
-4. Set System Date.
-5. Back to main menu.
 Please enter your choice??..1
-Enter the table name: Students
-Enter the column definitions (e.g., columnName dataType, columnName dataType, ...): id INT PRIMARY KEY, name VARCHAR(50), age INT
-Table Students created successfully.
+Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
+CREATE TABLE CUSTOMERS (CUSTOMER_ID VARCHAR(30), CUSTOMER_NAME VARCHAR(30), SHIPPING_ADDRESS VARCHAR(100), CREDIT_CARD_NO VARCHAR(20), PRIMARY KEY (CUSTOMER_ID))
+Table created successfully.
+
+Please enter your choice??..1
+Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
+CREATE TABLE ORDERS (ORDER_ID INTEGER, ORDER_DATE DATE, SHIPPING_STATUS CHAR(1), CHARGE FLOAT, CUSTOMER_ID VARCHAR(30), PRIMARY KEY (ORDER_ID), FOREIGN KEY (CUSTOMER_ID) REFERENCES CUSTOMERS(CUSTOMER_ID))
+Table created successfully.
+
+Please enter your choice??..1
+Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
+CREATE TABLE BOOKS (ISBN VARCHAR(13), BOOK_TITLE VARCHAR(50), UNIT_PRICE FLOAT, COPIES_AVAILABLE INTEGER, PRIMARY KEY (ISBN))
+Table created successfully.
+
+Please enter your choice??..1
+Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
+CREATE TABLE BOOK_ORDERED (ORDER_ID INTEGER, ISBN VARCHAR(13), QUANTITY INTEGER, PRIMARY KEY (ISBN, ORDER_ID), FOREIGN KEY (ISBN) REFERENCES BOOKS(ISBN))
+Table created successfully.
+
+Please enter your choice??..1
+Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
+CREATE TABLE AUTHORS (ISBN VARCHAR(13), AUTHOR_NAME VARCHAR(30), PRIMARY KEY (ISBN, AUTHOR_NAME), FOREIGN KEY (ISBN) REFERENCES BOOKS(ISBN))
+Table created successfully.
 
