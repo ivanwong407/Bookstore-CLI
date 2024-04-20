@@ -7,7 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class SearchBook {
     private static Scanner scanner = new Scanner(System.in);
@@ -186,54 +187,72 @@ public class SearchBook {
             // Prepare the SQL query to retrieve book details and authors
             String query = "SELECT b.BOOK_TITLE, b.ISBN, b.UNIT_PRICE, b.COPIES_AVAILABLE, a.AUTHOR_NAME " +
                            "FROM BOOKS b " +
-                           "INNER JOIN AUTHORS a ON b.ISBN = a.ISBN " +
-                           "WHERE LOWER(a.AUTHOR_NAME) LIKE ? " +
+                           "LEFT JOIN AUTHORS a ON b.ISBN = a.ISBN " +
+                           "WHERE b.ISBN IN ( " +
+                           "    SELECT DISTINCT b2.ISBN " +
+                           "    FROM BOOKS b2 " +
+                           "    LEFT JOIN AUTHORS a2 ON b2.ISBN = a2.ISBN " +
+                           "    WHERE LOWER(a2.AUTHOR_NAME) LIKE ? " +
+                           ") " +
                            "ORDER BY b.BOOK_TITLE ASC, b.ISBN ASC, a.AUTHOR_NAME ASC";
             PreparedStatement statement = conn.prepareStatement(query);
-            statement.setString(1, "%" + authorName.toLowerCase() + "%");
+            statement.setString(1, authorName.toLowerCase() + "%");
     
             // Execute the query
             ResultSet resultSet = statement.executeQuery();
     
-            boolean foundBooks = false;
-            String currentISBN = null;
-            String currentBookTitle = null;
-            float currentUnitPrice = 0.0f;
-            int currentCopiesAvailable = 0;
-            List<String> authors = new ArrayList<>();
+            Map<String, List<String>> bookAuthors = new LinkedHashMap<>();
     
             while (resultSet.next()) {
                 String isbn = resultSet.getString("ISBN");
-                if (currentISBN == null || !currentISBN.equals(isbn)) {
-                    // New book, print the details for the previous book (if any)
-                    if (currentISBN != null) {
-                        printBookDetails(currentBookTitle, currentISBN, currentUnitPrice, currentCopiesAvailable, authors);
-                        authors.clear();
-                    }
+                String bookTitle = resultSet.getString("BOOK_TITLE");
+                float unitPrice = resultSet.getFloat("UNIT_PRICE");
+                int copiesAvailable = resultSet.getInt("COPIES_AVAILABLE");
+                String authorNameFromResult = resultSet.getString("AUTHOR_NAME");
     
-                    foundBooks = true;
-                    currentISBN = isbn;
-                    currentBookTitle = resultSet.getString("BOOK_TITLE");
-                    currentUnitPrice = resultSet.getFloat("UNIT_PRICE");
-                    currentCopiesAvailable = resultSet.getInt("COPIES_AVAILABLE");
-    
-                    // Add the first author
-                    String authorNameFromResult = resultSet.getString("AUTHOR_NAME");
-                    authors.add(authorNameFromResult);
-                } else {
-                    // Same book, add the author
-                    String authorNameFromResult = resultSet.getString("AUTHOR_NAME");
+                if (authorNameFromResult != null) {
+                    List<String> authors = bookAuthors.computeIfAbsent(isbn, k -> new ArrayList<>());
                     authors.add(authorNameFromResult);
                 }
             }
     
-            // Print the details for the last book
-            if (currentISBN != null) {
-                printBookDetails(currentBookTitle, currentISBN, currentUnitPrice, currentCopiesAvailable, authors);
-            }
+            if (!bookAuthors.isEmpty()) {
+                for (Map.Entry<String, List<String>> entry : bookAuthors.entrySet()) {
+                    String isbn = entry.getKey();
+                    List<String> authors = entry.getValue();
     
-            if (!foundBooks) {
-                System.out.println("No books found for the author: " + authorName);
+                    // Get book details for the current ISBN
+                    String bookTitle = null;
+                    float unitPrice = 0.0f;
+                    int copiesAvailable = 0;
+    
+                    // Prepare a new query to fetch book details
+                    String bookDetailsQuery = "SELECT BOOK_TITLE, UNIT_PRICE, COPIES_AVAILABLE FROM BOOKS WHERE ISBN = ?";
+                    PreparedStatement bookDetailsStatement = conn.prepareStatement(bookDetailsQuery);
+                    bookDetailsStatement.setString(1, isbn);
+                    ResultSet bookDetailsResultSet = bookDetailsStatement.executeQuery();
+    
+                    if (bookDetailsResultSet.next()) {
+                        bookTitle = bookDetailsResultSet.getString("BOOK_TITLE");
+                        unitPrice = bookDetailsResultSet.getFloat("UNIT_PRICE");
+                        copiesAvailable = bookDetailsResultSet.getInt("COPIES_AVAILABLE");
+                    }
+    
+                    bookDetailsResultSet.close();
+                    bookDetailsStatement.close();
+    
+                    System.out.println("Book Title: " + bookTitle);
+                    System.out.println("ISBN: " + isbn);
+                    System.out.println("Unit Price: " + unitPrice);
+                    System.out.println("Copies Available: " + copiesAvailable);
+                    System.out.println("List of Authors:");
+                    for (int i = 0; i < authors.size(); i++) {
+                        System.out.println((i + 1) + ". " + authors.get(i));
+                    }
+                    System.out.println();
+                }
+            } else {
+                System.out.println("No books found with the author name: " + authorName);
             }
     
             // Close the resources
@@ -243,7 +262,7 @@ public class SearchBook {
             e.printStackTrace();
         }
     }
-    
+
     private static void printBookDetails(String bookTitle, String isbn, float unitPrice, int copiesAvailable, List<String> authors) {
         System.out.println("Book Title: " + bookTitle);
         System.out.println("ISBN: " + isbn);
