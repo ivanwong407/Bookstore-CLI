@@ -436,48 +436,41 @@ public class CustomerInterface {
     }
 //-------------OrderQuery---------------//
     private static void OrderQuery(Connection conn) {
-    System.out.print("Please enter Customer ID: ");
-    String customerId = scanner.next();
+        System.out.print("Please Input Customer ID: ");
+        String customerId = scanner.next();
 
-    // Check if the customer ID exists
-    if (!isCustomerIdValid(conn, customerId)) {
-        System.out.println("Invalid customer ID. Please try again.");
-        return;
-    }
+        System.out.print("Please Input the Year: ");
+        int year = scanner.nextInt();
 
-    System.out.print("Please input the year: ");
-    int year = scanner.nextInt();
+        String query = "SELECT o.ORDER_ID, o.ORDER_DATE, o.CHARGE, o.SHIPPING_STATUS " +
+                    "FROM ORDERS o " +
+                    "JOIN BOOK_ORDERED bo ON o.ORDER_ID = bo.ORDER_ID " +
+                    "WHERE o.CUSTOMER_ID = ? AND EXTRACT(YEAR FROM o.ORDER_DATE) = ? " +
+                    "ORDER BY o.ORDER_ID ASC";
 
-    String query = "SELECT o.ORDER_ID, o.ORDER_DATE, bo.ISBN, b.BOOK_TITLE, bo.QUANTITY, o.CHARGE, o.SHIPPING_STATUS " +
-    "FROM ORDERS o " +
-    "JOIN BOOK_ORDERED bo ON o.ORDER_ID = bo.ORDER_ID " +
-    "JOIN BOOKS b ON bo.ISBN = b.ISBN " +
-    "WHERE o.CUSTOMER_ID = ? AND EXTRACT(YEAR FROM o.ORDER_DATE) = ? " +
-    "ORDER BY o.ORDER_ID ASC";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, customerId);
+            stmt.setInt(2, year);
+            ResultSet rs = stmt.executeQuery();
 
-    try (PreparedStatement stmt = conn.prepareStatement(query)) {
-        stmt.setString(1, customerId);
-        stmt.setInt(2, year);
-        ResultSet rs = stmt.executeQuery();
-
-        if (!rs.isBeforeFirst()) {
-            System.out.println("No orders found for the given customer in the specified year.");
-        } else {
-            System.out.println("Order ID\tOrder Date\tBooks Ordered\tCharge\tShipping Status");
+            int recordCount = 1;
             while (rs.next()) {
                 int orderId = rs.getInt("ORDER_ID");
                 java.sql.Date orderDate = rs.getDate("ORDER_DATE");
-                //String isbn = rs.getString("ISBN");
-                String bookTitle = rs.getString("BOOK_TITLE");
-                int quantity = rs.getInt("QUANTITY");
                 float charge = rs.getFloat("CHARGE");
                 String shippingStatus = rs.getString("SHIPPING_STATUS");
 
-                System.out.printf("%d\t\t%tF\t%s (%d)\t\t%.2f\t%s%n", orderId, orderDate, bookTitle, quantity, charge, shippingStatus);
+                System.out.println("Record : " + recordCount);
+                System.out.println("OrderID : " + orderId);
+                System.out.println("OrderDate : " + orderDate);
+                System.out.println("charge : " + charge);
+                System.out.println("Shipping status : " + shippingStatus);
+                System.out.println();
+
+                recordCount++;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
-}
 }
