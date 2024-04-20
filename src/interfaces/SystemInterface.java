@@ -66,31 +66,15 @@ public class SystemInterface {
 
     private static void CreateTable(Connection conn) {
         try {
-            // Get the database metadata
-            DatabaseMetaData dbmd = conn.getMetaData();
+            Statement stmt = conn.createStatement();
 
-            // Prompt the user for the table name
-            System.out.print("Enter the table name: ");
-            String tableName = scanner.nextLine();
-
-            // Check if the table already exists
-            ResultSet tables = dbmd.getTables(null, null, tableName, null);
-            if (tables.next()) {
-                System.out.println("Table " + tableName + " already exists.");
-                return;
-            }
-
-            // Prompt the user for the column definitions
-            System.out.println("Enter the column definitions (e.g., columnName dataType, columnName dataType, ...):");
-            String columnDefinitions = scanner.nextLine();
-
-            // Create the SQL statement
-            String sql = "CREATE TABLE " + tableName + " (" + columnDefinitions + ")";
+            // Prompt the user to enter the table definition
+            System.out.println("Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):");
+            String tableDefinition = scanner.nextLine();
 
             // Execute the SQL statement
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
-            System.out.println("Table " + tableName + " created successfully.");
+            stmt.executeUpdate(tableDefinition);
+            System.out.println("Table created successfully.");
 
             stmt.close();
         } catch (SQLException ex) {
