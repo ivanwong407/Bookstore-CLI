@@ -52,7 +52,8 @@ public class CustomerInterface {
                 break;
         }
     }
-//-------------CreateOrder---------------//
+
+    //-------------CreateOrder---------------//
     private static boolean isCustomerIdValid(Connection conn, String customerId) {
         String query = "SELECT COUNT(*) FROM CUSTOMERS WHERE CUSTOMER_ID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
