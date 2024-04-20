@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime; //show system date
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.PreparedStatement;
+
 
 
 
@@ -123,79 +123,10 @@ public class SystemInterface {
 
     
     private static void InsertData(Connection conn) {
-        try {
-            // Prompt the user for the folder path
-            System.out.print("Enter the path of the folder containing the data files: ");
-            String folderPath = scanner.nextLine();
-    
-            File folder = new File(folderPath);
-            if (!folder.isDirectory()) {
-                System.out.println("Invalid folder path!");
-                return;
-            }
-    
-            // Get all files in the folder
-            File[] files = folder.listFiles();
-            if (files == null || files.length == 0) {
-                System.out.println("No files found in the specified folder.");
-                return;
-            }
-    
-            for (File file : files) {
-                try {
-                    // Parse the file contents and create the SQL statement
-                    String tableName = getTableNameFromFile(file);
-                    String sql = generateInsertSql(file, tableName, 4);
-    
-                    // Execute the SQL statement
-                    PreparedStatement stmt = conn.prepareStatement(sql);
-                    stmt.executeUpdate();
-                    System.out.println("Data from file " + file.getName() + " inserted into table " + tableName);
-                    stmt.close();
-                
-                } catch (SQLException e) {
-                    System.out.println("Error: " + e.getMessage());
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+ 
     }
 
-    private static String getTableNameFromFile(File file) {
-        // Extract the table name from the file name or file contents
-        // Example: Assuming the file name is "table_name.csv"
-        return file.getName().split("\\.")[0];
-    }
     
-    private static String generateInsertSql(File file, String tableName, int numColumns) {
-        StringBuilder sql = new StringBuilder();
-        try (Scanner fileScanner = new Scanner(file)) {
-            // Read the file line by line
-            
-            while (fileScanner.hasNextLine()) {
-                
-                String line = fileScanner.nextLine();
-                // Parse the line and append the values to the SQL statement
-                String[] values = line.split(",");
-                if (values.length != numColumns) {
-                    System.out.println("Error: Number of columns in the data file does not match the table schema.");
-                    continue; // Skip this line and move to the next line
-                }
-                
-                sql.append("INSERT INTO ").append(tableName).append(" VALUES (");
-                for (String value : values) {
-                    sql.append("'").append(value).append("',");
-                }
-                sql.setLength(sql.length() - 1); // Remove the trailing comma
-                sql.append(");"); // Add the semicolon to terminate the SQL statement
-                sql.append("\n"); // Add a newline for better readability
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-        return sql.toString();
-    }
     private static void SetSystemDate() {
         Scanner scanner = null;
         try {
