@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class SearchBook {
     private static Scanner scanner = new Scanner(System.in);
 
@@ -37,7 +38,7 @@ public class SearchBook {
                 displaySearchMenu(conn);
                 break;
             case 3:
-                searchByAuthorName();
+                searchByAuthorName(conn);
                 displaySearchMenu(conn);
                 break;
             case 4:
@@ -177,6 +178,72 @@ public class SearchBook {
         }
     }
     
+    private static void searchByAuthorName(Connection conn) {
+        System.out.print("Enter the author name: ");
+        String authorName = scanner.nextLine();
+    
+        try {
+            // Prepare the SQL query to retrieve book details and authors
+            String query = "SELECT b.BOOK_TITLE, b.ISBN, b.UNIT_PRICE, b.COPIES_AVAILABLE, a.AUTHOR_NAME " +
+                           "FROM BOOKS b " +
+                           "INNER JOIN AUTHORS a ON b.ISBN = a.ISBN " +
+                           "WHERE LOWER(a.AUTHOR_NAME) LIKE ? " +
+                           "ORDER BY b.BOOK_TITLE ASC, b.ISBN ASC, a.AUTHOR_NAME ASC";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, "%" + authorName.toLowerCase() + "%");
+    
+            // Execute the query
+            ResultSet resultSet = statement.executeQuery();
+    
+            boolean foundBooks = false;
+            String currentISBN = null;
+            String currentBookTitle = null;
+            float currentUnitPrice = 0.0f;
+            int currentCopiesAvailable = 0;
+            List<String> authors = new ArrayList<>();
+    
+            while (resultSet.next()) {
+                String isbn = resultSet.getString("ISBN");
+                if (currentISBN == null || !currentISBN.equals(isbn)) {
+                    // New book, print the details for the previous book (if any)
+                    if (currentISBN != null) {
+                        printBookDetails(currentBookTitle, currentISBN, currentUnitPrice, currentCopiesAvailable, authors);
+                        authors.clear();
+                    }
+    
+                    foundBooks = true;
+                    currentISBN = isbn;
+                    currentBookTitle = resultSet.getString("BOOK_TITLE");
+                    currentUnitPrice = resultSet.getFloat("UNIT_PRICE");
+                    currentCopiesAvailable = resultSet.getInt("COPIES_AVAILABLE");
+    
+                    // Add the first author
+                    String authorNameFromResult = resultSet.getString("AUTHOR_NAME");
+                    authors.add(authorNameFromResult);
+                } else {
+                    // Same book, add the author
+                    String authorNameFromResult = resultSet.getString("AUTHOR_NAME");
+                    authors.add(authorNameFromResult);
+                }
+            }
+    
+            // Print the details for the last book
+            if (currentISBN != null) {
+                printBookDetails(currentBookTitle, currentISBN, currentUnitPrice, currentCopiesAvailable, authors);
+            }
+    
+            if (!foundBooks) {
+                System.out.println("No books found for the author: " + authorName);
+            }
+    
+            // Close the resources
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
     private static void printBookDetails(String bookTitle, String isbn, float unitPrice, int copiesAvailable, List<String> authors) {
         System.out.println("Book Title: " + bookTitle);
         System.out.println("ISBN: " + isbn);
@@ -187,13 +254,5 @@ public class SearchBook {
             System.out.println((i + 1) + ". " + authors.get(i));
         }
         System.out.println();
-    }
-    
-    private static void searchByAuthorName() {
-        System.out.print("Enter the author name: ");
-        String authorName = scanner.nextLine();
-        // Implement logic to search for a book by author name
-        System.out.println("Searching for book with author: " + authorName);
-        // ...
     }
 }
