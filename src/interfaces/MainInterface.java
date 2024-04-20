@@ -42,6 +42,7 @@ public class MainInterface {
                 break;
             case 4:
                 showSystemDate();
+                displayMainMenu(conn);
                 break;
             case 5:
                 System.out.println("Quitting the system...");
