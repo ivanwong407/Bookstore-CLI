@@ -408,7 +408,11 @@ public class CustomerInterface {
     }
     
     private static void displayOrderDetails(Connection conn, int orderId) {
-        String query = "SELECT ORDER_ID, SHIPPING_STATUS, CHARGE, CUSTOMER_ID FROM ORDERS WHERE ORDER_ID = ?";
+        String query = "SELECT o.ORDER_ID, o.SHIPPING_STATUS, o.CHARGE, o.CUSTOMER_ID, SUM(bo.QUANTITY) AS TOTAL_QUANTITY " +
+                       "FROM ORDERS o " +
+                       "LEFT JOIN BOOK_ORDERED bo ON o.ORDER_ID = bo.ORDER_ID " +
+                       "WHERE o.ORDER_ID = ? " +
+                       "GROUP BY o.ORDER_ID, o.SHIPPING_STATUS, o.CHARGE, o.CUSTOMER_ID";
     
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, orderId);
@@ -419,8 +423,9 @@ public class CustomerInterface {
                 String shippingStatus = rs.getString("SHIPPING_STATUS");
                 float charge = rs.getFloat("CHARGE");
                 String customerId = rs.getString("CUSTOMER_ID");
+                int totalQuantity = rs.getInt("TOTAL_QUANTITY");
     
-                System.out.println("order_id:" + orderid + " shipping:" + shippingStatus + " charge=" + charge + " customerId=" + customerId);
+                System.out.println("order_id:" + orderid + " shipping:" + shippingStatus + " charge=" + charge + " customerId=" + customerId + " total_quantity=" + totalQuantity);
             } else {
                 System.out.println("Order not found.");
             }
