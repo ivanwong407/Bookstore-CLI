@@ -32,7 +32,7 @@ public class BookstoreInterface {
                 break;
             case 3:
                 // Implement logic for N most Popular Book Query
-                // findNmost(conn);
+                findNmost(conn);
                 break;
             case 4:
                 System.out.println("Going back to main menu...");
@@ -141,7 +141,7 @@ public class BookstoreInterface {
             }
 
             System.out.println("\n\nTotal charges of the month is " + totalCharges);
-            //System.out.println("Number of records: " + count
+            // System.out.println("Number of records: " + count
 
             resultSet.close();
             statement.close();
@@ -149,4 +149,40 @@ public class BookstoreInterface {
             e.printStackTrace();
         }
     }
+
+    private static void findNmost(Connection conn) {
+    System.out.print("Please input the N popular books number: ");
+    int N = scanner.nextInt();
+    scanner.nextLine(); // Consume the newline character
+
+    try {
+        // Query the N most popular books
+        String query = "SELECT B.BOOK_TITLE, B.ISBN, SUM(BO.QUANTITY) AS TOTAL_COPIES " +
+        "FROM BOOKS B " +
+        "JOIN BOOK_ORDERED BO ON B.ISBN = BO.ISBN " +
+        "GROUP BY B.BOOK_TITLE, B.ISBN " +
+        "HAVING SUM(BO.QUANTITY) >= (SELECT MIN(TOTAL_COPIES) FROM " +
+        "(SELECT SUM(QUANTITY) AS TOTAL_COPIES FROM BOOK_ORDERED GROUP BY ISBN ORDER BY SUM(QUANTITY) DESC FETCH FIRST ? ROWS ONLY) T) " +
+        "ORDER BY TOTAL_COPIES DESC, B.BOOK_TITLE ASC, B.ISBN ASC";
+        PreparedStatement statement = conn.prepareStatement(query);
+        statement.setInt(1, N);
+        ResultSet resultSet = statement.executeQuery();
+
+        // Print the results
+        System.out.println("ISBN\t\tTitle\t\tcopies");
+        while (resultSet.next()) {
+            String isbn = resultSet.getString("ISBN");
+            String title = resultSet.getString("BOOK_TITLE");
+            int totalCopies = resultSet.getInt("TOTAL_COPIES");
+
+            String bookInfo = isbn + "\t" + title + "\t" + totalCopies;
+            System.out.println(bookInfo);
+        }
+
+        resultSet.close();
+        statement.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
 }
