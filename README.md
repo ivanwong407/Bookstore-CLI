@@ -3,6 +3,10 @@ Group:11
 1155129246 Lee Siu Cheung
 1155161947 Wong Po Wa
 
+## How to run our code
+run App.java file
+the command line interface will appear in console
+
 ## Create Table command format:
 Please enter your choice??..1
 Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
