@@ -5,13 +5,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchBook {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void displaySearchMenu(Connection conn) {
-        System.out.println("Book Search");
-        System.out.println("To query a book by ISBN, Book Title and Author Name");
+        System.out.println("Book Search Menu");
         System.out.println("What do you want to search??");
         System.out.println("1 ISBN");
         System.out.println("2 Book Title");
@@ -52,31 +53,51 @@ public class SearchBook {
     private static void searchByISBN(Connection conn) {
         System.out.print("Enter the ISBN: ");
         String isbn = scanner.nextLine();
-
+    
         try {
-            // Prepare the SQL query
-            String query = "SELECT * FROM BOOKS WHERE ISBN = ?";
+            // Prepare the SQL query to retrieve book details and authors
+            String query = "SELECT b.BOOK_TITLE, b.ISBN, b.UNIT_PRICE, b.COPIES_AVAILABLE, a.AUTHOR_NAME " +
+                           "FROM BOOKS b " +
+                           "LEFT JOIN AUTHORS a ON b.ISBN = a.ISBN " +
+                           "WHERE b.ISBN = ? " +
+                           "ORDER BY b.BOOK_TITLE ASC, b.ISBN ASC, a.AUTHOR_NAME ASC";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, isbn);
-
+    
             // Execute the query
             ResultSet resultSet = statement.executeQuery();
-
+    
             if (resultSet.next()) {
                 // Book found, display the details
                 String bookTitle = resultSet.getString("BOOK_TITLE");
                 float unitPrice = resultSet.getFloat("UNIT_PRICE");
                 int copiesAvailable = resultSet.getInt("COPIES_AVAILABLE");
-
+                List<String> authors = new ArrayList<>();
+    
+                // Add the first author
+                authors.add(resultSet.getString("AUTHOR_NAME"));
+    
+                // Fetch remaining authors for the same book
+                while (resultSet.next()) {
+                    String authorName = resultSet.getString("AUTHOR_NAME");
+                    if (authorName != null) {
+                        authors.add(authorName);
+                    }
+                }
+    
                 System.out.println("Book Details:");
-                System.out.println("ISBN: " + isbn);
                 System.out.println("Book Title: " + bookTitle);
+                System.out.println("ISBN: " + isbn);
                 System.out.println("Unit Price: " + unitPrice);
                 System.out.println("Copies Available: " + copiesAvailable);
+                System.out.println("Authors:");
+                for (int i = 0; i < authors.size(); i++) {
+                    System.out.println((i + 1) + ". " + authors.get(i));
+                }
             } else {
                 System.out.println("No book found with ISBN: " + isbn);
             }
-
+    
             // Close the resources
             resultSet.close();
             statement.close();
