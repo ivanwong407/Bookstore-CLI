@@ -1,4 +1,9 @@
-## Create Table testing:
+## Group Info:
+Group:11
+1155129246 Lee Siu Cheung
+1155161947 Wong Po Wa
+
+## Create Table command format:
 Please enter your choice??..1
 Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
 CREATE TABLE CUSTOMERS (CUSTOMER_ID VARCHAR(30), CUSTOMER_NAME VARCHAR(30), SHIPPING_ADDRESS VARCHAR(100), CREDIT_CARD_NO VARCHAR(20), PRIMARY KEY (CUSTOMER_ID))
