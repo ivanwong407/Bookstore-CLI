@@ -3,6 +3,8 @@ import java.sql.Connection;
 import java.util.Scanner;
 import java.time.LocalDateTime; //show system date
 import java.time.format.DateTimeFormatter; //show system date
+import utils.DateTimeUtils;
+
 
 public class MainInterface {
     private static Scanner scanner = new Scanner(System.in);
@@ -55,7 +57,7 @@ public class MainInterface {
 
 
     private static String getCurrentDate() {
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime currentDateTime = DateTimeUtils.getCurrentDateTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return currentDateTime.format(formatter);
     }

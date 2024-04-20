@@ -6,6 +6,17 @@ import java.sql.ResultSet;
 import java.sql.DatabaseMetaData;
 import java.sql.Statement;
 import java.sql.SQLException;
+//import java.io.File;
+//import java.io.FileNotFoundException;
+//import java.sql.PreparedStatement;
+import utils.DateTimeUtils;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime; //show system date
+
+
+
+
 
 public class SystemInterface {
     private static Scanner scanner = new Scanner(System.in);
@@ -110,13 +121,55 @@ public class SystemInterface {
     }
 
     private static void InsertData(Connection conn) {
-            // Implement logic to insert data
-            System.out.println("Inserting data...");
-
+        try {
+            // Prompt the user for the table name
+            System.out.print("Enter the table name: ");
+            String tableName = scanner.nextLine();
+    
+            // Prompt the user for the column names
+            System.out.print("Enter the column names (separated by commas): ");
+            String columnNames = scanner.nextLine();
+    
+            // Prompt the user for the values
+            System.out.print("Enter the values (separated by commas): ");
+            String values = scanner.nextLine();
+    
+            // Create the SQL statement
+            String sql = "INSERT INTO " + tableName + " (" + columnNames + ") VALUES (" + values + ")";
+    
+            // Execute the SQL statement
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+            System.out.println("Data inserted successfully.");
+    
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private static void SetSystemDate() {
-            // Implement logic to set system date
-            System.out.println("Setting system date...");
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(System.in);
+    
+            // Prompt the user for the new system date
+            System.out.print("Enter the new system date (YYYY-MM-DD): ");
+            String newDateString = scanner.nextLine();
+    
+            // Parse the input date string
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate newDate = LocalDate.parse(newDateString, formatter);
+    
+            // Set the new system date
+            LocalDateTime newDateTime = newDate.atStartOfDay();
+            DateTimeUtils.setCurrentDateTime(newDateTime);
+    
+            System.out.println("System date updated successfully!");
+        } catch (Exception ex) {
+            System.out.println("Error occurred while setting system date: " + ex.getMessage());
+        } 
     }
+
+
 }
