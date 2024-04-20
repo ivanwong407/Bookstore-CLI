@@ -205,9 +205,9 @@ public class SearchBook {
     
             while (resultSet.next()) {
                 String isbn = resultSet.getString("ISBN");
-                String bookTitle = resultSet.getString("BOOK_TITLE");
-                float unitPrice = resultSet.getFloat("UNIT_PRICE");
-                int copiesAvailable = resultSet.getInt("COPIES_AVAILABLE");
+                //String bookTitle = resultSet.getString("BOOK_TITLE");
+                //float unitPrice = resultSet.getFloat("UNIT_PRICE");
+                //int copiesAvailable = resultSet.getInt("COPIES_AVAILABLE");
                 String authorNameFromResult = resultSet.getString("AUTHOR_NAME");
     
                 if (authorNameFromResult != null) {

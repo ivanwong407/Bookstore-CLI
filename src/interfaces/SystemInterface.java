@@ -21,23 +21,22 @@ public class SystemInterface {
     }
 
     private static void handleChoice(int choice, Connection conn) {
-        Command command;
         switch (choice) {
             case 1:
-                command = new CreateTableCommand();
-                command.execute(conn);
+                CreateTable();
+
                 break;
             case 2:
-                command = new DeleteTableCommand();
-                command.execute(conn);
+                DeleteTable();
+                
                 break;
             case 3:
-                command = new InsertDataCommand();
-                command.execute(conn);
+                InsertData();
+                
                 break;
             case 4:
-                command = new SetSystemDateCommand();
-                command.execute(conn);
+                SetSystemDate();
+                
                 break;
             case 5:
                 System.out.println("Going back to main menu...");
@@ -49,35 +48,26 @@ public class SystemInterface {
         }
     }
 
-    private static class CreateTableCommand implements Command {
-        @Override
-        public void execute(Connection conn) {
+    private static void CreateTable() {
             // Implement logic to create a table
             System.out.println("Creating table...");
-        }
+
     }
 
-    private static class DeleteTableCommand implements Command {
-        @Override
-        public void execute(Connection conn) {
+    private static void DeleteTable() {
             // Implement logic to delete a table
             System.out.println("Deleting table...");
-        }
+
     }
 
-    private static class InsertDataCommand implements Command {
-        @Override
-        public void execute(Connection conn) {
+    private static void InsertData() {
             // Implement logic to insert data
             System.out.println("Inserting data...");
-        }
+
     }
 
-    private static class SetSystemDateCommand implements Command {
-        @Override
-        public void execute(Connection conn) {
+    private static void SetSystemDate() {
             // Implement logic to set system date
             System.out.println("Setting system date...");
-        }
     }
 }
