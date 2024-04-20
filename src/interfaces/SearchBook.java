@@ -33,7 +33,7 @@ public class SearchBook {
                 displaySearchMenu(conn);
                 break;
             case 2:
-                searchByBookTitle();
+                searchByBookTitle(conn);
                 displaySearchMenu(conn);
                 break;
             case 3:
@@ -106,14 +106,89 @@ public class SearchBook {
         }
     }
 
-    private static void searchByBookTitle() {
-        System.out.print("Enter the book title: ");
+    private static void searchByBookTitle(Connection conn) {
+        System.out.print("Enter the book title (use '%' or '_' for wildcards): ");
         String title = scanner.nextLine();
-        // Implement logic to search for a book by title
-        System.out.println("Searching for book with title: " + title);
-        // ...
+    
+        try {
+            // Prepare the SQL query to retrieve book details and authors
+            String query = "SELECT b.BOOK_TITLE, b.ISBN, b.UNIT_PRICE, b.COPIES_AVAILABLE, a.AUTHOR_NAME " +
+                           "FROM BOOKS b " +
+                           "LEFT JOIN AUTHORS a ON b.ISBN = a.ISBN " +
+                           "WHERE LOWER(b.BOOK_TITLE) LIKE ? " +
+                           "ORDER BY CASE WHEN LOWER(b.BOOK_TITLE) = ? THEN 1 ELSE 2 END, b.BOOK_TITLE ASC, b.ISBN ASC, a.AUTHOR_NAME ASC";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, "%" + title.toLowerCase().replaceAll("_", "__") + "%");
+            statement.setString(2, title.toLowerCase().replaceAll("_", "__"));
+    
+            // Execute the query
+            ResultSet resultSet = statement.executeQuery();
+    
+            boolean foundBooks = false;
+            String currentISBN = null;
+            String currentBookTitle = null;
+            float currentUnitPrice = 0.0f;
+            int currentCopiesAvailable = 0;
+            List<String> authors = new ArrayList<>();
+    
+            while (resultSet.next()) {
+                String isbn = resultSet.getString("ISBN");
+                if (currentISBN == null || !currentISBN.equals(isbn)) {
+                    // New book, print the details for the previous book (if any)
+                    if (currentISBN != null) {
+                        printBookDetails(currentBookTitle, currentISBN, currentUnitPrice, currentCopiesAvailable, authors);
+                        authors.clear();
+                    }
+    
+                    foundBooks = true;
+                    currentISBN = isbn;
+                    currentBookTitle = resultSet.getString("BOOK_TITLE");
+                    currentUnitPrice = resultSet.getFloat("UNIT_PRICE");
+                    currentCopiesAvailable = resultSet.getInt("COPIES_AVAILABLE");
+    
+                    // Add the first author
+                    String authorName = resultSet.getString("AUTHOR_NAME");
+                    if (authorName != null) {
+                        authors.add(authorName);
+                    }
+                } else {
+                    // Same book, add the author
+                    String authorName = resultSet.getString("AUTHOR_NAME");
+                    if (authorName != null) {
+                        authors.add(authorName);
+                    }
+                }
+            }
+    
+            // Print the details for the last book
+            if (currentISBN != null) {
+                printBookDetails(currentBookTitle, currentISBN, currentUnitPrice, currentCopiesAvailable, authors);
+            }
+    
+            if (!foundBooks) {
+                System.out.println("No books found with the title: " + title);
+            }
+    
+            // Close the resources
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-
+    
+    private static void printBookDetails(String bookTitle, String isbn, float unitPrice, int copiesAvailable, List<String> authors) {
+        System.out.println("Book Title: " + bookTitle);
+        System.out.println("ISBN: " + isbn);
+        System.out.println("Unit Price: " + unitPrice);
+        System.out.println("Copies Available: " + copiesAvailable);
+        System.out.println("Authors:");
+        for (int i = 0; i < authors.size(); i++) {
+            System.out.println((i + 1) + ". " + authors.get(i));
+        }
+        System.out.println();
+    }
+    
     private static void searchByAuthorName() {
         System.out.print("Enter the author name: ");
         String authorName = scanner.nextLine();
