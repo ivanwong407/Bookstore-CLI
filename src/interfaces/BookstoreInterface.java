@@ -1,12 +1,10 @@
 package interfaces;
 
 import java.util.Scanner;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 
 public class BookstoreInterface {
     private static Scanner scanner = new Scanner(System.in);
@@ -18,21 +16,23 @@ public class BookstoreInterface {
         System.out.println("2. Order Query.");
         System.out.println("3. N most Popular Book Query.");
         System.out.println("4. Back to main menu.");
+
         System.out.print("Please enter your choice: ");
         int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume the leftover newline character
-        
+        scanner.nextLine();
+
         switch (choice) {
             case 1:
                 // Implement logic for Order Update
                 OrderUpdate(conn);
-                displayBookstoreInterface(conn);
                 break;
             case 2:
                 // Implement logic for Order Query
+                OrderQuery(conn);
                 break;
             case 3:
                 // Implement logic for N most Popular Book Query
+                findNmost(conn);
                 break;
             case 4:
                 System.out.println("Going back to main menu...");
@@ -107,4 +107,83 @@ public class BookstoreInterface {
         }
     }
 
+    private static void OrderQuery(Connection conn) {
+        System.out.print("Please input the Month for Order Query (e.g. YYYY-MM): ");
+        String month = scanner.nextLine();
+
+        try {
+            // Query the total charges and orders for the given month
+            String query = "SELECT ORDER_ID, CUSTOMER_ID, ORDER_DATE, CHARGE " +
+                    "FROM ORDERS " +
+                    "WHERE SHIPPING_STATUS = 'Y' AND EXTRACT(MONTH FROM ORDER_DATE) = EXTRACT(MONTH FROM TO_DATE(?, 'YYYY-MM')) "
+                    +
+                    "ORDER BY ORDER_ID ASC";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, month);
+            ResultSet resultSet = statement.executeQuery();
+
+            // Print the orders and calculate the total charges
+            int count = 0;
+            int totalCharges = 0;
+            while (resultSet.next()) {
+                count++;
+                String orderId = resultSet.getString("ORDER_ID");
+                String customerId = resultSet.getString("CUSTOMER_ID");
+                String orderDate = resultSet.getString("ORDER_DATE");
+                int charge = resultSet.getInt("CHARGE");
+                totalCharges += charge;
+
+                System.out.println("\n\nRecord: " + count);
+                System.out.println("order id: " + orderId);
+                System.out.println("customer id: " + customerId);
+                System.out.println("date: " + orderDate);
+                System.out.println("charge: " + charge);
+            }
+
+            System.out.println("\n\nTotal charges of the month is " + totalCharges);
+            // System.out.println("Number of records: " + count
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void findNmost(Connection conn) {
+        System.out.print("Please input the N popular books number: ");
+        int N = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
+
+        try {
+            // Query the N most popular books
+            String query = "SELECT B.BOOK_TITLE, B.ISBN, SUM(BO.QUANTITY) AS TOTAL_COPIES " +
+                    "FROM BOOKS B " +
+                    "JOIN BOOK_ORDERED BO ON B.ISBN = BO.ISBN " +
+                    "GROUP BY B.BOOK_TITLE, B.ISBN " +
+                    "HAVING SUM(BO.QUANTITY) >= (SELECT MIN(TOTAL_COPIES) FROM " +
+                    "(SELECT SUM(QUANTITY) AS TOTAL_COPIES FROM BOOK_ORDERED GROUP BY ISBN ORDER BY SUM(QUANTITY) DESC FETCH FIRST ? ROWS ONLY) T) "
+                    +
+                    "ORDER BY TOTAL_COPIES DESC, B.BOOK_TITLE ASC, B.ISBN ASC";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, N);
+            ResultSet resultSet = statement.executeQuery();
+
+            // Print the results
+            System.out.println("ISBN\t\tTitle\t\tcopies");
+            while (resultSet.next()) {
+                String isbn = resultSet.getString("ISBN");
+                String title = resultSet.getString("BOOK_TITLE");
+                int totalCopies = resultSet.getInt("TOTAL_COPIES");
+
+                String bookInfo = isbn + "\t" + title + "\t" + totalCopies;
+                System.out.println(bookInfo);
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
