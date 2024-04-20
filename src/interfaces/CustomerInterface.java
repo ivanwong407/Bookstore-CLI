@@ -27,16 +27,17 @@ public class CustomerInterface {
                 SearchBook.displaySearchMenu(conn); // Use the existing instance
                 break;
             case 2:
-                command = new CreateOrderCommand();
-                command.execute(conn);
+                CreateOrder(conn);
+                
+                displayCustomerInterface(conn);
                 break;
             case 3:
-                command = new OrderAlteringCommand();
-                command.execute(conn);
+                OrderAltering(conn);
+                
                 break;
             case 4:
-                command = new OrderQueryCommand();
-                command.execute(conn);
+                OrderQuery(conn);
+
                 break;
             case 5:
                 System.out.println("Going back to main menu...");
@@ -50,28 +51,19 @@ public class CustomerInterface {
 
 
 
-    private static class CreateOrderCommand implements Command {
-        @Override
-        public void execute(Connection conn) {
-            // Implement logic to place an order
-            System.out.println("Placing an order...");
-        }
+    private static void CreateOrder(Connection conn) {
+
+
     }
 
-    private static class OrderAlteringCommand implements Command {
-        @Override
-        public void execute(Connection conn) {
-            // Implement logic to view order history
-            System.out.println("Order Altering...");
-        }
+    private static void OrderAltering(Connection conn) {
+
+
     }
 
-    private static class OrderQueryCommand implements Command {
-        @Override
-        public void execute(Connection conn) {
-            // Implement logic to view order history
-            System.out.println("Order query...");
-        }
+    private static void OrderQuery(Connection conn) {
+
+
     }
 
 }
