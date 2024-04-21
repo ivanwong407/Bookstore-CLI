@@ -1,13 +1,13 @@
-** Group Info:
+**Group Info:**
 Group:11
 1155129246 Lee Siu Cheung
 1155161947 Wong Po Wa
 
-** How to run our code**
+**How to run our code**
 run App.java file
 the command line interface will appear in the console
 
-** Create Table: (Noticed that you can't create the table that has already existed) **
+**Create Table: (Noticed that you can't create the table that has already existed)**
 Sequence to create tables:
 BOOKS->AUTHORS->CUSTOMERS->ORDERS->BOOK_ORDERED
 
@@ -31,7 +31,7 @@ BOOK_ORDERED:
 Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
 CREATE TABLE BOOK_ORDERED (ORDER_ID INTEGER, ISBN VARCHAR(13), QUANTITY INTEGER, PRIMARY KEY (ISBN, ORDER_ID), FOREIGN KEY (ISBN) REFERENCES BOOKS(ISBN))
 
-** Delete Table sequence:**
+**Delete Table sequence:**
 BOOK_ORDERED->ORDERS->AUTHORS->CUSTOMERS->BOOKS
 
 ** The data insertion: (Noticed that only the data files inside the test_data folder are able to be inserted) **
