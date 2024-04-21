@@ -36,4 +36,20 @@ Table created successfully.
 ## The data insertion: (Noticed that only the data files inside test_data folder are able to insert)
 "your path"/our_porject/test_data"
 
+**Please ensure the filenames are the same as in test_data:**
+
+orders.txt
+ordering.txt
+customer.txt
+book.txt
+book_author.txt
+
+**Successful Insertion will show:**
+
+Data successfully inserted into BOOKS
+Data successfully inserted into CUSTOMERS
+Data successfully inserted into ORDERS
+Data successfully inserted into BOOK_ORDERED
+Data successfully inserted into AUTHORS Processing... Data is loaded!
+
 
