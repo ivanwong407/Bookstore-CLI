@@ -1,11 +1,11 @@
 package interfaces;
 
 import java.util.Scanner;
-
+import java.sql.Connection;
 public class SystemInterface {
     private static Scanner scanner = new Scanner(System.in);
 
-    public static void displaySystemInterface() {
+    public static void displaySystemInterface(Connection conn) {
         System.out.println("<This is the System interface.>");
         System.out.println("-------------------------------------------");
         System.out.println("1. Create Table.");
@@ -17,31 +17,31 @@ public class SystemInterface {
         System.out.print("Please enter your choice??..");
         int choice = scanner.nextInt();
 
-        handleChoice(choice);
+        handleChoice(choice, conn);
     }
 
-    private static void handleChoice(int choice) {
+    private static void handleChoice(int choice, Connection conn) {
         Command command;
         switch (choice) {
             case 1:
                 command = new CreateTableCommand();
-                command.execute();
+                command.execute(conn);
                 break;
             case 2:
                 command = new DeleteTableCommand();
-                command.execute();
+                command.execute(conn);
                 break;
             case 3:
                 command = new InsertDataCommand();
-                command.execute();
+                command.execute(conn);
                 break;
             case 4:
                 command = new SetSystemDateCommand();
-                command.execute();
+                command.execute(conn);
                 break;
             case 5:
                 System.out.println("Going back to main menu...");
-                MainInterface.displayMainMenu();
+                MainInterface.displayMainMenu(conn);
                 break;
             default:
                 System.out.println("Invalid choice!");
@@ -51,7 +51,7 @@ public class SystemInterface {
 
     private static class CreateTableCommand implements Command {
         @Override
-        public void execute() {
+        public void execute(Connection conn) {
             // Implement logic to create a table
             System.out.println("Creating table...");
         }
@@ -59,7 +59,7 @@ public class SystemInterface {
 
     private static class DeleteTableCommand implements Command {
         @Override
-        public void execute() {
+        public void execute(Connection conn) {
             // Implement logic to delete a table
             System.out.println("Deleting table...");
         }
@@ -67,7 +67,7 @@ public class SystemInterface {
 
     private static class InsertDataCommand implements Command {
         @Override
-        public void execute() {
+        public void execute(Connection conn) {
             // Implement logic to insert data
             System.out.println("Inserting data...");
         }
@@ -75,7 +75,7 @@ public class SystemInterface {
 
     private static class SetSystemDateCommand implements Command {
         @Override
-        public void execute() {
+        public void execute(Connection conn) {
             // Implement logic to set system date
             System.out.println("Setting system date...");
         }

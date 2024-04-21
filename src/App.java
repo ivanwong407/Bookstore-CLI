@@ -19,7 +19,7 @@ public class App {
 
             if (conn != null) {
                 System.out.println("Connected to the Oracle database successfully!");
-                MainInterface.main(null);
+                MainInterface.main(conn); // Pass the Connection object to MainInterface.main
             }
         } catch (ClassNotFoundException | SQLException ex) {
             ex.printStackTrace();
