@@ -1,14 +1,19 @@
 **Group Info:**
-Group: 11
+Group:11
 1155129246 Lee Siu Cheung
 1155161947 Wong Po Wa
 
+Demon Video Link:
+Link: https://cuhk.zoom.us/rec/share/xvJ08rc28nhatCciNrKXVXwFYjfTfX1M-5NbsthJwH8LOUdPkjQ6dosG0k95PBoR.zSW3PmJjn0iYfBxW?startTime=1713699288000
+Password: .Nn6xPJC
+
 **How to run our code**
-Run App.java file. The command line interface will appear in the console.
+run App.java file
+the command line interface will appear in the console
 
 **Create Table: (Noticed that you can't create the table that has already existed)**
 Sequence to create tables:
-BOOKS -> AUTHORS -> CUSTOMERS -> ORDERS -> BOOK_ORDERED
+BOOKS->AUTHORS->CUSTOMERS->ORDERS->BOOK_ORDERED
 
 BOOKS:
 Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
@@ -30,11 +35,11 @@ BOOK_ORDERED:
 Enter the table definition (e.g., CREATE TABLE TABLENAME (COLUMN1 TYPE, COLUMN2 TYPE, ...);):
 CREATE TABLE BOOK_ORDERED (ORDER_ID INTEGER, ISBN VARCHAR(13), QUANTITY INTEGER, PRIMARY KEY (ISBN, ORDER_ID), FOREIGN KEY (ISBN) REFERENCES BOOKS(ISBN))
 
-**Delete Table sequence:**
-BOOK_ORDERED -> ORDERS -> AUTHORS -> CUSTOMERS -> BOOKS
+Delete Table sequence:
+BOOK_ORDERED->ORDERS->AUTHORS->CUSTOMERS->BOOKS
 
 **The data insertion: (Noticed that only the data files inside the test_data folder are able to be inserted)**
-C:\{your_path}\CSCI3170_test\src\test_data
+C:{your_path}\CSCI3170_test\src\test_data
 
 **Please ensure the filenames are the same as in test_data:**
 orders.txt
